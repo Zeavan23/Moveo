@@ -1,5 +1,7 @@
 DevOps Home Assignment
+
 Overview
+
 This project demonstrates how to deploy an NGINX instance on AWS using Terraform, Docker, and other infrastructure as code (IaC) tools. The NGINX instance will be publicly accessible and display the message "yo this is nginx" when accessed from a browser.
 
 Architecture
