@@ -1,15 +1,24 @@
+
 DevOps Home Assignment - README
+
 Overview
+
 This project demonstrates how to deploy an NGINX instance on AWS using Terraform, Docker, and other infrastructure as code (IaC) tools. The NGINX instance will be publicly accessible and display the message "yo this is nginx" when accessed from a browser.
 
 Architecture
+
 The architecture consists of:
 
 A Virtual Private Cloud (VPC) with public and private subnets.
+
 An EC2 instance in the private subnet running a Dockerized NGINX server.
+
 A Bastion host in the public subnet serving as a reverse proxy.
+
 Security groups to control inbound and outbound traffic.
+
 An internet gateway for internet access.
+
 Prerequisites
 AWS account with appropriate permissions to create resources.
 Terraform installed on your local machine.
