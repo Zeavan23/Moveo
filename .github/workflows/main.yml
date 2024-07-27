@@ -20,13 +20,12 @@ jobs:
         terraform_version: 1.0.5
 
     - name: Terraform Init
-      working-directory: ./terraform
+      working-directory: Moveo/PycharmProjects/Devops-moveo/terraform
       run: terraform init
 
     - name: Terraform Apply
-      working-directory: ./terraform
+      working-directory: Moveo/PycharmProjects/Devops-moveo/terraform
       run: terraform apply -auto-approve
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
