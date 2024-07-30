@@ -2,12 +2,10 @@ provider "aws" {
   region = "us-east-1"
 }
 
-# Create VPC
 resource "aws_vpc" "main" {
   cidr_block = "10.0.0.0/16"
 }
 
-# Create public subnet
 resource "aws_subnet" "public" {
   vpc_id                  = aws_vpc.main.id
   cidr_block              = "10.0.1.0/24"
@@ -15,7 +13,6 @@ resource "aws_subnet" "public" {
   map_public_ip_on_launch = true
 }
 
-# Create private subnet
 resource "aws_subnet" "private" {
   vpc_id                  = aws_vpc.main.id
   cidr_block              = "10.0.2.0/24"
@@ -23,12 +20,10 @@ resource "aws_subnet" "private" {
   map_public_ip_on_launch = false
 }
 
-# Create an Internet Gateway
 resource "aws_internet_gateway" "gw" {
   vpc_id = aws_vpc.main.id
 }
 
-# Associate Internet Gateway with Public Route Table
 resource "aws_route_table" "public" {
   vpc_id = aws_vpc.main.id
 
@@ -43,18 +38,15 @@ resource "aws_route_table_association" "public_association" {
   route_table_id = aws_route_table.public.id
 }
 
-# Create an Elastic IP for the NAT Gateway
 resource "aws_eip" "nat" {
   vpc = true
 }
 
-# Create a NAT Gateway in the public subnet
 resource "aws_nat_gateway" "nat" {
   allocation_id = aws_eip.nat.id
   subnet_id     = aws_subnet.public.id
 }
 
-# Create a route table for the private subnet
 resource "aws_route_table" "private" {
   vpc_id = aws_vpc.main.id
 
@@ -69,11 +61,9 @@ resource "aws_route_table_association" "private_association" {
   route_table_id = aws_route_table.private.id
 }
 
-# Create a Security Group for NGINX and SSH
 resource "aws_security_group" "nginx_sg" {
   vpc_id = aws_vpc.main.id
 
-  # Allow HTTP traffic
   ingress {
     from_port   = 80
     to_port     = 80
@@ -81,7 +71,6 @@ resource "aws_security_group" "nginx_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  # Allow SSH traffic
   ingress {
     from_port   = 22
     to_port     = 22
@@ -97,11 +86,9 @@ resource "aws_security_group" "nginx_sg" {
   }
 }
 
-# Create a Security Group for the Bastion Host
 resource "aws_security_group" "bastion_sg" {
   vpc_id = aws_vpc.main.id
 
-  # Allow SSH traffic
   ingress {
     from_port   = 22
     to_port     = 22
@@ -109,7 +96,6 @@ resource "aws_security_group" "bastion_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  # Allow HTTP traffic for reverse proxy
   ingress {
     from_port   = 80
     to_port     = 80
@@ -125,7 +111,6 @@ resource "aws_security_group" "bastion_sg" {
   }
 }
 
-# Create an EC2 Instance for the NGINX server in the private subnet
 resource "aws_instance" "nginx" {
   ami                    = "ami-014d544cfef21b42d"
   instance_type          = "t3.micro"
@@ -150,7 +135,6 @@ resource "aws_instance" "nginx" {
               EOF
 }
 
-# Create a Bastion Host for SSH access in the public subnet
 resource "aws_instance" "bastion" {
   ami                    = "ami-014d544cfef21b42d"
   instance_type          = "t3.micro"
@@ -185,14 +169,11 @@ resource "aws_instance" "bastion" {
               EOF
 }
 
-# Output the public IP of the Bastion host
 output "bastion_public_ip" {
   value = aws_instance.bastion.public_ip
 }
 
-# Output the private IP of the NGINX instance
 output "nginx_private_ip" {
   value = aws_instance.nginx.private_ip
 }
-
 
