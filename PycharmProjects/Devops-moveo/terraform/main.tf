@@ -65,7 +65,7 @@ resource "aws_instance" "nginx_reverse_proxy" {
   ami           = "ami-0c55b159cbfafe1f0"  # שנה ל-AMI המתאים לאזור שלך
   instance_type = "t2.micro"
 
-  # צור key pair לפני כן והוסף את שמו כאן
+  # צור key pair לפני כן והוסף את שמו כאן test
   key_name = "0708"
 
   user_data = <<-EOF
