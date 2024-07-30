@@ -43,6 +43,32 @@ resource "aws_route_table_association" "public_association" {
   route_table_id = aws_route_table.public.id
 }
 
+# Create an Elastic IP for NAT Gateway
+resource "aws_eip" "nat" {
+  vpc = true
+}
+
+# Create a NAT Gateway in the public subnet
+resource "aws_nat_gateway" "nat" {
+  allocation_id = aws_eip.nat.id
+  subnet_id     = aws_subnet.public.id
+}
+
+# Create a private route table
+resource "aws_route_table" "private" {
+  vpc_id = aws_vpc.main.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.nat.id
+  }
+}
+
+resource "aws_route_table_association" "private_association" {
+  subnet_id      = aws_subnet.private.id
+  route_table_id = aws_route_table.private.id
+}
+
 # Create a Security Group for NGINX and SSH
 resource "aws_security_group" "nginx_sg" {
   vpc_id = aws_vpc.main.id
@@ -147,7 +173,7 @@ resource "aws_instance" "bastion" {
               server {
                   listen 80;
                   location / {
-                      proxy_pass http://10.0.2.39:80;
+                      proxy_pass http://10.0.2.251:80;
                       proxy_set_header Host \$host;
                       proxy_set_header X-Real-IP \$remote_addr;
                       proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
@@ -168,3 +194,4 @@ output "bastion_public_ip" {
 output "nginx_private_ip" {
   value = aws_instance.nginx.private_ip
 }
+
