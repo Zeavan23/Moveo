@@ -43,7 +43,7 @@ resource "aws_route_table_association" "public_association" {
   route_table_id = aws_route_table.public.id
 }
 
-# Create an Elastic IP for NAT Gateway
+# Create an Elastic IP for the NAT Gateway
 resource "aws_eip" "nat" {
   vpc = true
 }
@@ -54,7 +54,7 @@ resource "aws_nat_gateway" "nat" {
   subnet_id     = aws_subnet.public.id
 }
 
-# Create a private route table
+# Create a route table for the private subnet
 resource "aws_route_table" "private" {
   vpc_id = aws_vpc.main.id
 
@@ -173,7 +173,7 @@ resource "aws_instance" "bastion" {
               server {
                   listen 80;
                   location / {
-                      proxy_pass http://10.0.2.251:80;
+                      proxy_pass http://10.0.2.186:80;
                       proxy_set_header Host \$host;
                       proxy_set_header X-Real-IP \$remote_addr;
                       proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
