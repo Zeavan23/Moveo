@@ -196,4 +196,3 @@ output "nginx_private_ip" {
 }
 
 
-
