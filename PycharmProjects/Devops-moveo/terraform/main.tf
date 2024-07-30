@@ -43,18 +43,17 @@ resource "aws_route_table_association" "public_association" {
   route_table_id = aws_route_table.public.id
 }
 
-# Create an Elastic IP for the NAT Gateway
-resource "aws_eip" "nat" {
+# Create NAT Gateway
+resource "aws_eip" "nat_eip" {
   vpc = true
 }
 
-# Create a NAT Gateway in the public subnet
 resource "aws_nat_gateway" "nat" {
-  allocation_id = aws_eip.nat.id
+  allocation_id = aws_eip.nat_eip.id
   subnet_id     = aws_subnet.public.id
 }
 
-# Create a route table for the private subnet
+# Create Route Table for Private Subnet
 resource "aws_route_table" "private" {
   vpc_id = aws_vpc.main.id
 
@@ -89,7 +88,6 @@ resource "aws_security_group" "nginx_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  # Allow outbound traffic
   egress {
     from_port   = 0
     to_port     = 0
@@ -118,7 +116,6 @@ resource "aws_security_group" "bastion_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  # Allow outbound traffic
   egress {
     from_port   = 0
     to_port     = 0
@@ -175,7 +172,7 @@ resource "aws_instance" "bastion" {
               server {
                   listen 80;
                   location / {
-                      proxy_pass http://10.0.2.47:80;
+                      proxy_pass http://10.0.2.39:80;
                       proxy_set_header Host \$host;
                       proxy_set_header X-Real-IP \$remote_addr;
                       proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
@@ -196,4 +193,6 @@ output "bastion_public_ip" {
 output "nginx_private_ip" {
   value = aws_instance.nginx.private_ip
 }
+
+
 
