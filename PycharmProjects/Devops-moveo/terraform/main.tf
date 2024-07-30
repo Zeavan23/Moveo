@@ -59,7 +59,7 @@ resource "aws_route_table" "private" {
   vpc_id = aws_vpc.main.id
 
   route {
-    cidr_block = "0.0.0.0/0"
+    cidr_block     = "0.0.0.0/0"
     nat_gateway_id = aws_nat_gateway.nat.id
   }
 }
@@ -173,7 +173,7 @@ resource "aws_instance" "bastion" {
               server {
                   listen 80;
                   location / {
-                      proxy_pass http://10.0.2.186:80;
+                      proxy_pass http://10.0.2.39:80;
                       proxy_set_header Host \$host;
                       proxy_set_header X-Real-IP \$remote_addr;
                       proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
@@ -194,5 +194,6 @@ output "bastion_public_ip" {
 output "nginx_private_ip" {
   value = aws_instance.nginx.private_ip
 }
+
 
 
