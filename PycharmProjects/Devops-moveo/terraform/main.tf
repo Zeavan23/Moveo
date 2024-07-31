@@ -147,7 +147,7 @@ resource "aws_instance" "bastion" {
               server {
                   listen 80;
                   location / {
-                      proxy_pass http://10.0.2.39:80;
+                      proxy_pass http://${aws_instance.nginx.private_ip}:80;
                       proxy_set_header Host \$host;
                       proxy_set_header X-Real-IP \$remote_addr;
                       proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
